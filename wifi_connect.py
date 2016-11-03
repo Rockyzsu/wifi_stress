@@ -3,6 +3,15 @@ __author__ = 'rocky chen'
 from uiautomator import device as d
 import time,subprocess,re,os
 
+def zip_log(filename):
+    filename="count_%d.log" %filename
+    cmd='zip %s.zip %s' %(filename,filename)
+    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+    out,err=p.communicate()
+    p.wait()
+
+    os.remove(filename)
+
 def move_operation(action_key):
     cmd='adb shell input keyevent %s' %action_key
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
@@ -133,6 +142,12 @@ def check_connection(count):
     else:
         print "Passed"
 
+    try:
+        os.remove("capture.log")
+
+    except:
+        print "Delete capture.log failed"
+
 
 def reboot_device(count):
     print "reboot device in loop %d" %count
@@ -182,13 +197,17 @@ if __name__=="__main__":
     #get_log(2)
     #basic_info()
 
-    reboot_device(1)
+
     for i in range(3000):
+        reboot_device(i)
         wifi_connect(i)
         get_log(i)
         check_wifi_list(i)
         check_connection(i)
         forget_password(i)
+        zip_log(i)
 
     #move_operation('KEYCODE_HOME')
     #move_operation('KEYCODE_DPAD_DOWN')
+
+    zip_log("count_110.log")

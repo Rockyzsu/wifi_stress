@@ -57,7 +57,7 @@ def wifi_connect(count):
     d.press.enter()
     #move_operation('KEYCODE_ENTER')
 
-    cmd='adb shell input text xiaomi5g'
+    cmd='adb shell input text xiaomi2g'
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
     out,err=p.communicate()
     cmd='adb shell input keyevent KEYCODE_ESCAPE'
@@ -74,7 +74,7 @@ def wifi_connect(count):
     d.press.enter()
     #move_operation('KEYCODE_ENTER')
 
-    cmd='adb shell input text test12345'
+    cmd='adb shell input text test1234'
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
     out,err=p.communicate()
     p.wait()
@@ -83,8 +83,7 @@ def wifi_connect(count):
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
     out,err=p.communicate()
     p.wait()
-
-    time.sleep(10)
+    time.sleep(25)
 
 
 

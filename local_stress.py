@@ -42,9 +42,26 @@ def delete_photo(count=1000):
         print out
         print err
 
+def delete_log(count):
+    photo_file_name=str(count)+'.png'
+    log_file_name="count_"+str(count)+".log"
+    cmd='rm -f %s' %photo_file_name
+    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+    out,err=p.communicate()
+    print out
+    print err
+
+    cmd='rm -f %s' %log_file_name
+    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+    out,err=p.communicate()
+    print out
+    print err
 
 
 if __name__=="__main__":
-    count=1000
-    capture_stress(count)
+    count=500
+    #capture_stress(count)
+
     #delete_photo(count)
+    for i in range(700,863):
+        delete_log(i)

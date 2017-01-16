@@ -191,22 +191,36 @@ def get_log(count):
     '''
     os.system(cmd)
 
+
+def reboot_check_wifi(count):
+    reboot_device(count)
+    time.sleep(45)
+    check_connect(count)
+
+
+
 if __name__=="__main__":
 
     #check_connection()
     #get_log(2)
     #basic_info()
 
-
+    '''
     for i in range(3000):
-        reboot_device(i)
+
         wifi_connect(i)
         get_log(i)
         check_wifi_list(i)
         check_connection(i)
         forget_password(i)
         zip_log(i)
-
+    '''
     #move_operation('KEYCODE_HOME')
     #move_operation('KEYCODE_DPAD_DOWN')
+
+
+    #zip_log("count_110.log")
+
+    for i in range(2):
+        reboot_check_wifi(i)
 

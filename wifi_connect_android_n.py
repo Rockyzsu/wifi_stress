@@ -1,5 +1,7 @@
 #-*-coding=utf-8-*-
-__author__ = 'rocky chen'
+__author__ = 'rocky'
+#working on android-N
+
 from uiautomator import device as d
 import time,subprocess,re,os
 
@@ -139,6 +141,7 @@ def check_connection(count):
     #print t
     if t:
         print "Failed"
+
     else:
         print "Passed"
 
@@ -183,7 +186,6 @@ def forget_password(count):
     time.sleep(1)
 
 def get_log(count):
-
     cmd="adb logcat -v time >count_%d.log &" %count
     '''p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
     out,err=p.communicate()
@@ -191,22 +193,35 @@ def get_log(count):
     '''
     os.system(cmd)
 
+
+def reboot_check_wifi(count):
+    reboot_device(count)
+    time.sleep(45)
+    get_log(count)
+    check_connection(count)
+
+
+
 if __name__=="__main__":
 
     #check_connection()
     #get_log(2)
     #basic_info()
 
-
+    '''
     for i in range(3000):
-        reboot_device(i)
+
         wifi_connect(i)
         get_log(i)
         check_wifi_list(i)
         check_connection(i)
         forget_password(i)
         zip_log(i)
-
+    '''
     #move_operation('KEYCODE_HOME')
     #move_operation('KEYCODE_DPAD_DOWN')
 
+    #zip_log("count_110.log")
+
+    for i in range(500):
+        reboot_check_wifi(i)

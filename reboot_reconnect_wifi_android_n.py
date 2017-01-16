@@ -1,7 +1,12 @@
 #-*-coding=utf-8-*-
-__author__ = 'rocky chen'
+
+__author__ = 'rocky'
+#Work on android N
+
 from uiautomator import device as d
 import time,subprocess,re,os
+
+
 
 def zip_log(filename):
     filename="count_%d.log" %filename
@@ -34,64 +39,49 @@ def check_connect():
 def wifi_connect(count):
     print "WIFI connect in LOOP %d" %count
     d.press.home()
-    #move_operation('KEYCODE_HOME')
     d.press.down()
-
-    #move_operation('KEYCODE_DPAD_DOWN')
-
     d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-
     d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
 
     d.press.right()
-    #move_operation('KEYCODE_DPAD_RIGHT')
+    d.press.right()
+    d.press.right()
+    d.press.right()
 
     d.press.enter()
-    #move_operation('KEYCODE_ENTER')
+    time.sleep(2)
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.down()
 
     d.press.enter()
-    #move_operation('KEYCODE_ENTER')
-    d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-    d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-    d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-    d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-    d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-    d.press.enter()
-    #move_operation('KEYCODE_ENTER')
-
-    cmd='adb shell input text xiaomi2g'
+    time.sleep(2)
+    cmd='adb shell input text xiaomi_hdd'
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-    out,err=p.communicate()
+
     cmd='adb shell input keyevent KEYCODE_ESCAPE'
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-    out,err=p.communicate()
-    cmd='adb shell input keyevent KEYCODE_ENTER'
-    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-    out,err=p.communicate()
-
-    d.press.down()
-    d.press.down()
-    #move_operation('KEYCODE_DPAD_DOWN')
-    #d.press.down()
+    time.sleep(1)
     d.press.enter()
-    #move_operation('KEYCODE_ENTER')
+    time.sleep(1)
 
-    cmd='adb shell input text test1234'
-    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-    out,err=p.communicate()
-    p.wait()
+    #d.press.enter()
 
-    cmd='adb shell input keyevent KEYCODE_ENTER'
+
+    d.press.down()
+    d.press.down()
+    d.press.enter()
+    cmd='adb shell input text asdfghjkl'
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-    out,err=p.communicate()
-    p.wait()
+
+
+    cmd='adb shell input keyevent KEYCODE_ESCAPE'
+    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+
+    d.press.enter()
+
     time.sleep(25)
 
 
@@ -164,7 +154,7 @@ def reboot_device(count):
     p.wait()
 
     print "Reboot done"
-    time.sleep(60)
+    time.sleep(50)
 
 def forget_password(count):
     print "Forget wifi in loop %d" %count
@@ -172,15 +162,26 @@ def forget_password(count):
     d.press.down()
     d.press.down()
     d.press.down()
+    d.press.down()
+    d.press.right()
+    d.press.right()
+    d.press.right()
     d.press.right()
     d.press.enter()
-    d.press.enter()
-    d.press.enter()
-    d.press.down()
-    d.press.down()
-    d.press.enter()
-    d.press.enter()
+    time.sleep(2)
+    d.press.up()
     time.sleep(1)
+    d.press.enter()
+    time.sleep(2)
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.enter()
+    d.press.enter()
+    time.sleep(2)
 
 def get_log(count):
 
@@ -191,22 +192,38 @@ def get_log(count):
     '''
     os.system(cmd)
 
+
+def reboot_check_wifi(count):
+    reboot_device(count)
+    time.sleep(10)
+    get_log(count)
+    wifi_connect(count)
+    time.sleep(3)
+    check_connection(count)
+    forget_password(count)
+
+
+
 if __name__=="__main__":
 
     #check_connection()
     #get_log(2)
     #basic_info()
 
-
+    '''
     for i in range(3000):
-        reboot_device(i)
+
         wifi_connect(i)
         get_log(i)
         check_wifi_list(i)
         check_connection(i)
         forget_password(i)
         zip_log(i)
-
+    '''
     #move_operation('KEYCODE_HOME')
     #move_operation('KEYCODE_DPAD_DOWN')
 
+    #zip_log("count_110.log")
+
+    for i in range(500):
+        reboot_check_wifi(i)

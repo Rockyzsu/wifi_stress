@@ -118,7 +118,6 @@ def check_wifi_list(count):
     p.wait()
 
 
-
 def check_connection(count):
     print "check connection %d" %count
     fp=open("capture.log",'w')

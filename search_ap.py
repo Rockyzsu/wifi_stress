@@ -1,5 +1,6 @@
 from uiautomator import device as d
 import time,sys,subprocess
+
 def wifiStatus():
     time.sleep(8)
     print "Checking status"

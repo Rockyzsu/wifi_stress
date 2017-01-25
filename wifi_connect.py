@@ -210,4 +210,3 @@ if __name__=="__main__":
     #move_operation('KEYCODE_HOME')
     #move_operation('KEYCODE_DPAD_DOWN')
 
-    zip_log("count_110.log")

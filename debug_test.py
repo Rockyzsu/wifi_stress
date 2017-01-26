@@ -377,7 +377,7 @@ def main():
     for i in range(total_count):
         reboot_device(i)
         get_log(i, 'Case2')
-        time.sleep(20)
+        time.sleep(30)
         temp=check_connection(i)
         case2_fail_count=case2_fail_count+temp
         zip_log(i, "Case2")

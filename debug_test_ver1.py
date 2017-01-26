@@ -5,24 +5,17 @@
 import time
 import subprocess
 import re
-import os
+import os,datetime
 
 from uiautomator import device as d
-
 
 def get_log(count, test_step):
     kmsg = 'adb shell cat /proc/kmsg >>kmsg_%d_%s.txt &' % (count, test_step)
 
     cmd = "adb logcat -v time >>logcat_count_%d_%s.log &" % (count, test_step)
 
-    '''
-    p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-    out,err=p.communicate()
-    print out,err
-    '''
     os.system(cmd)
     os.system(kmsg)
-
 
 def zip_log(count, caseNo):
     filename = 'logfile_%d_%s' % (count, caseNo)
@@ -34,7 +27,6 @@ def zip_log(count, caseNo):
     p.wait()
     os.remove(filename1)
     os.remove(filename2)
-
 
 def kill_log(username):
     cmd = 'ps -aux |grep "adb logcat -v time"'
@@ -54,6 +46,20 @@ def kill_log(username):
         except:
             print "Kill error"
 
+def backHome():
+    time.sleep(1)
+    d.press.home()
+    time.sleep(5)
+    d.press.down()
+    d.press.down()
+    d.press.right()
+    d.press.right()
+    #d.press.right()
+    # d.press.right()
+    d.press.enter()
+    time.sleep(2)
+    d.press.enter()
+    time.sleep(2)
 
 def wifi_connect(count, ap, passwd, def_timeout):
     print "WIFI connect in LOOP %d" % count
@@ -215,48 +221,6 @@ def forget_password(count):
     time.sleep(2)
 
 
-def ap_switch(count, ap1, ap2, passwd, timeout):
-    print "Connect another AP2 in Loop %d" % count
-    time.sleep(2)
-    d.press.enter()
-    cmd = 'adb shell input text %s' % ap2
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-
-    cmd = 'adb shell input keyevent KEYCODE_ESCAPE'
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    time.sleep(1)
-    d.press.enter()
-    time.sleep(1)
-
-
-
-    # d.press.enter()
-
-
-    d.press.down()
-    d.press.down()
-    d.press.enter()
-    cmd = 'adb shell input text %s' % passwd
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    time.sleep(1)
-    cmd = 'adb shell input keyevent KEYCODE_ESCAPE'
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    time.sleep(1)
-    d.press.enter()
-    print "waiting to connect AP2"
-    time.sleep(timeout)
-
-    d.press.up()
-    d.press.up()
-    d.press.up()
-    d.press.up()
-    d.press.up()
-    time.sleep(3)
-    find_ap(count, ap1, timeout)
-    # wifiStatus()
-    find_ap(count, ap2, timeout)
-    # wifiStatus()
-
 
 def forget_switch(count):
     print "forget both two ap in Loop %d" % count
@@ -276,35 +240,68 @@ def forget_switch(count):
     d.press.enter()
     time.sleep(2)
     
-def wifi_scan_time():
-    cmd = 'adb shell wpa_cli scan_r |grep -E "xiaomi2g|xiaomi5g"'
+def wifi_scan_time(ap,ap2):
+    cmd = 'adb shell wpa_cli scan_r |grep -E "%s|%s"' %(ap,ap2)
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     p_out=p.stdout.read()
     print p_out
 
-def find_ap(apName,def_timeout):
-    time.sleep(10)
-    d.press.enter()
-    time.sleep(2)
-    d.press.enter()
-    time.sleep(2)
-#    os.system("adb shell input keyevent KEYCODE_DPAD_RIGHT")
-    d.press.enter()
-    if d(text="Connected successfully").wait.exists(timeout=60000) == False:
-        print "connecting time over 60s"
-        wifi_scan_time()
-    if d(text="Connected successfully").wait.exists(timeout=20000) == False:
-        print "connecting time over 80s"
-    d(text="Connected successfully").wait.exists(timeout=120000)
+def find_ap(ap,ap2,def_timeout,count,passwd):
+
+    ap_text='Saved'
+    if d(text='Saved').exists==False:
+        try:
+            d(text='See all').click()
+            time.sleep(3)
+            d(scrollable=True).scroll.to(text='Saved')
+            if d(text=ap_text).exists==False:
+                print "Failed. Saved AP not found on AP list"
+                d.screenshot("Failed_not_found_%d.png" %count)
+                backHome()
+                wifi_scan_time(ap,ap2)
+                wifi_connect(0,ap,passwd,def_timeout)
+                wifi_connect(0,ap2,passwd,def_timeout)
+                return 1
+        except:
+            d.screenshot("Failed_exception_%d.png" %count)
+            backHome()
+            wifi_connect(0,ap,passwd,def_timeout)
+            wifi_connect(0,ap2,passwd,def_timeout)
+            return 1
+    try:
+        d(text=ap_text).click()
+        time.sleep(3)
+        d(text='Connect').click()
+        time.sleep(1)
+            #d.press.enter()
+            #start=datetime.datetime.now()
+        if d(text="Connected successfully").wait.exists(timeout=def_timeout*1000) == False:
+            print "connecting time over 60s"
+            wifi_scan_time(ap,ap2)
+        if d(text="Connected successfully").wait.exists(timeout=20000) == False:
+            print "connecting time over 80s"
+            return 1
+        if d(text="Connected successfully").wait.exists(timeout=120000):
+            print "Connected within 200s"
+            backHome()
+            return 0
+        else:
+            print "Failed to switch AP"
+            wifi_scan_time(ap,ap2)
+            d.screenshot("Failed_switch_%d.png" %count)
+            #backHome()
+            wifi_connect(0,ap,passwd,def_timeout)
+            wifi_connect(0,ap2,passwd,def_timeout)
+            return 1
+    except:
+            #backHome()
+            wifi_connect(0,ap,passwd,def_timeout)
+            wifi_connect(0,ap2,passwd,def_timeout)
+            return 1
 
 
-'''
-def skipTryagain():
-    time.sleep(5)
-    if d(text = "Couldn't connect to xiaomi_hdd_5G").exists or d(text = "Couldn't connect to xiaomi_hdd").exists:
-        d.press.back()
-        d.press.back()
-'''
+
+
 
 
 def wifiStatus(ap, ap2, passwd):
@@ -335,7 +332,7 @@ def wifiStatus(ap, ap2, passwd):
         #        d.press.enter()
         time.sleep(5)
     elif d(text="Couldn't connect to").exists:
-        print "Coundn't connect ..."
+        print "Couldn't connect ..."
         d.press.back()
         d.press.back()
     elif d(text="Couldn't find").exists:
@@ -360,42 +357,7 @@ def wifiStatus(ap, ap2, passwd):
         print "Connected to AP"
 
 
-# d(text ="Connected successfully.").wait.exists(timeout=3000)
-#    time.sleep(2)
-#    d.press.back()
 
-'''
-def check_AP(apName):
-    time.sleep(5)
-    d(scrollable=True).scroll.to(text= apName)
-    if d(text = apName).exists & d(text="Connected").exists:
-        time.sleep(2)
-        print "AP %s connected" % apName
-    else:
-        print "not found  at the %s time" % i
-        d.screenshot("ap.png")
-
-    return True
-'''
-
-
-def backHome():
-    time.sleep(1)
-    d.press.home()
-    time.sleep(5)
-    d.press.down()
-    d.press.down()
-    d.press.right()
-    d.press.right()
-    #d.press.right()
-    # d.press.right()
-    d.press.enter()
-    time.sleep(2)
-    d.press.enter()
-    time.sleep(2)
-
-
-#    d(text = "See all").click()
 
 
 def main():
@@ -404,7 +366,8 @@ def main():
     ap = 'SQA_Wi_FI'
     passwd = 'asdfghjkl'
     ap2 = 'SQA_WiFi_5G'
-    hostuser = 'ming'
+    hostuser = 'xda'
+
     '''
     reboot_device(0)
     print "Case 1"
@@ -453,37 +416,38 @@ def main():
         zip_log(i, "Case3")
         kill_log(hostuser)
     print "case3 fail count %d" %case3_fail_count
-    ''''
-    reboot_device(0)
+    '''
+
+    #reboot_device(0)
     
     print "Case 4"
     wifi_connect(0, ap, passwd, 50)
     time.sleep(3)
-#    d.press.enter()
 
     wifi_connect(0, ap2, passwd, 50)
 
     backHome()
     case4_fail_count=0
     for i in range(total_count):
-        print "this is the %s time" % i
+        print "Loops %s th" % i
         get_log(i, 'Case4')
-        find_ap(ap, timeout)
-        wifiStatus(ap, ap2, passwd)
-        temp1=check_connection(i)
-        find_ap(ap2, timeout)
-        wifiStatus(ap, ap2, passwd)
-        temp2=check_connection(i)
-        case4_fail_count=case4_fail_count+temp2+temp1
+        temp1=find_ap(ap,ap2, timeout,i,passwd)
+        #wifiStatus(ap, ap2, passwd)
+        #temp1=check_connection(i)
+        time.sleep(3)
+        temp2=find_ap(ap2,ap, timeout,i,passwd)
+        #wifiStatus(ap, ap2, passwd)
+        #temp2=check_connection(i)
+        #case4_fail_count=case4_fail_count+temp2+temp1
         zip_log(i, "Case4")
         kill_log(hostuser)
 
     print "case4 fail count %d" %case4_fail_count
 
     print "******************* Summary ****************"
-    print "case1 fail count %d" %case1_fail_count
-    print "case2 fail count %d" %case2_fail_count
-    print "case3 fail count %d" %case3_fail_count
+    #print "case1 fail count %d" %case1_fail_count
+    #print "case2 fail count %d" %case2_fail_count
+    #print "case3 fail count %d" %case3_fail_count
     print "case4 fail count %d" %case4_fail_count
 
 if __name__ == "__main__":

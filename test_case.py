@@ -59,6 +59,8 @@ def wifi_connect(count, ap, passwd, def_timeout):
     # time.sleep(def_timeout)
     time.sleep(2)
     return 0
+
+'''
 ap='xiaomi_hdd'
 ap2='xiaomi_hdd_5G'
 passwd='asdfghjkl'
@@ -79,3 +81,10 @@ time.sleep(2)
 d.press.up()
 time.sleep(5)
 print "Done"
+'''
+
+#print d(text="Couldn't connect to SQA_Wi_FI").exists
+try:
+    d(text="See all").click()
+except:
+    print "can't find see all"

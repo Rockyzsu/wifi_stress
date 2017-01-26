@@ -375,7 +375,7 @@ def main():
     for i in range(total_count):
         # test case1
 
-
+        print "Time: ",datetime.datetime.now()
         get_log(i, "Case1")
         wifi_connect(i, ap, passwd, timeout)
         temp=check_connection(i)
@@ -392,6 +392,7 @@ def main():
     case2_fail_count = 0
     for i in range(total_count):
         # test case2
+        print "Time: ",datetime.datetime.now()
         reboot_device(i)
         get_log(i, 'Case2')
         temp=check_connection(i)
@@ -406,6 +407,7 @@ def main():
     print "Case 3"
     case3_fail_count = 0
     for i in range(total_count):
+        print "Time: ",datetime.datetime.now()
         reboot_device(i)
         get_log(i, 'Case3')
         wifi_connect(i, ap, passwd, timeout)
@@ -429,6 +431,7 @@ def main():
     backHome()
     case4_fail_count=0
     for i in range(total_count):
+        print "Time: ",datetime.datetime.now()
         print "Loops %s th" % i
         get_log(i, 'Case4')
         temp1=find_ap(ap,ap2, timeout,i,passwd)

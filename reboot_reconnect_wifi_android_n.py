@@ -258,7 +258,7 @@ def forget_switch(count):
 
 
 if __name__=="__main__":
-
+    forget_password(1)
     ap='Huawei_2G'
     passwd='asdfghjkl'
     reboot_device(0)

@@ -109,7 +109,7 @@ def wifi_connect(count, ap, passwd, def_timeout):
         print "Fail to connect AP"
         #fail_count = fail_count + 1
         return 1
-    d(text="Connected successfully").wait.exists(timeout=120000)
+    d(text="Connected successfully").wait.exists(timeout=130000)
     # time.sleep(def_timeout)
     return 0
 
@@ -283,7 +283,7 @@ def wifi_scan_time():
     print p_out
 
 def find_ap(apName,def_timeout):
-    time.sleep(10)
+    time.sleep(4)
     d.press.enter()
     time.sleep(2)
     d.press.enter()
@@ -328,21 +328,20 @@ def wifiStatus(ap, ap2, passwd):
         time.sleep(5)
         print "reconenct done"
         
-    elif d(text="Hide password").exists:
+    elif d(textContains="Hide password").exists:
         print "Enter password"
         d.screenshot("Enter_password_.png")
         os.popen('adb shell input text asdfghjkl')
-        #        d.press.enter()
         time.sleep(5)
-    elif d(text="Couldn't connect to").exists:
-        print "Coundn't connect ..."
+    elif d(textContains="Couldn't connect to").exists:
+        print "Couldn't connect ..."
         d.press.back()
         d.press.back()
-    elif d(text="Couldn't find").exists:
-        print "Coundn't find ..."
+    elif d(textContains="Couldn't find").exists:
+        print "Couldn't find ..."
         d.screenshot("could_not_find.png")
-        wifi_connect(0, ap, passwd, 40)
-        wifi_connect(0, ap2, passwd, 40)
+        wifi_connect(0, ap, passwd, 50)
+        wifi_connect(0, ap2, passwd, 50)
         print "Reconnect"
         time.sleep(2)
         d.press.up()
@@ -399,12 +398,13 @@ def backHome():
 
 
 def main():
-    timeout = 60
+    timeout = 70
     total_count = 500
-    ap = 'xiaomi2g'
-    passwd = 'nvtest1234'
-    ap2 = 'xiaomi5g'
-    hostuser = 'minglin'
+    ap = 'SQA_WIFI'
+    passwd = 'asdfghjkl'
+    ap2 = 'SQA_WIFI_5G'
+    hostuser = 'qabuilder'
+
     reboot_device(0)
     print "Case 1"
     case1_fail_count = 0
@@ -430,6 +430,7 @@ def main():
         # test case2
         reboot_device(i)
         get_log(i, 'Case2')
+        time.sleep(60)
         temp=check_connection(i)
         wifi_scan_time()
         # forget_password(i)
@@ -452,11 +453,12 @@ def main():
         zip_log(i, "Case3")
         kill_log(hostuser)
     print "case3 fail count %d" %case3_fail_count
+
+
     reboot_device(0)
     print "Case 4"
     wifi_connect(0, ap, passwd, 50)
     time.sleep(3)
-#    d.press.enter()
 
     wifi_connect(0, ap2, passwd, 50)
 

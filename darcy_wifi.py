@@ -54,16 +54,15 @@ def backHome():
     d.press.down()
     d.press.down()
     d.press.down()
-    d.press.down()
-    d.press.right()
-    d.press.right()
+    #d.press.right()
+    #.press.right()
     #d.press.right()
     # d.press.right()
     d.press.enter()
     time.sleep(2)
     d.press.enter()
     time.sleep(2)
-    print "finish back home"
+    #print "finish back home"
 
 def wifi_connect(count, ap, passwd, def_timeout):
     print "WIFI connect in LOOP %d" % count
@@ -73,10 +72,9 @@ def wifi_connect(count, ap, passwd, def_timeout):
     d.press.down()
     d.press.down()
     d.press.down()
-    d.press.down()
 
-    d.press.right()
-    d.press.right()
+    #d.press.right()
+    #d.press.right()
     #d.press.right()
     # d.press.right()
 
@@ -261,9 +259,8 @@ def wifi_switch_test(count,ap,ap2,passwd,timeout):
             d(text=ap).click()
         except:
             print "Can't find ap %s in AP list" %ap
-            d.screenshot("cant_find_ap_%d.png" %count)
-            wifi_connect(count,ap2,passwd,timeout)
             wifi_connect(count,ap,passwd,timeout)
+            wifi_connect(count,ap2,passwd,timeout)
             backHome()
             return 1
     time.sleep(3)
@@ -272,8 +269,8 @@ def wifi_switch_test(count,ap,ap2,passwd,timeout):
         print "click connect"
         time.sleep(3)
     except:
-        wifi_connect(count,ap2,passwd,timeout)
         wifi_connect(count,ap,passwd,timeout)
+        wifi_connect(count,ap2,passwd,timeout)
         backHome()
         return 1
 
@@ -283,35 +280,31 @@ def wifi_switch_test(count,ap,ap2,passwd,timeout):
 
     elif d(textContains="Wi-Fi password not valid").exists:
         print "Password not valid"
-        d.screenshot("password_not_valid_%d.png" %count)
-        wifi_connect(count,ap2,passwd,timeout)
         wifi_connect(count,ap,passwd,timeout)
+        wifi_connect(count,ap2,passwd,timeout)
         backHome()
         return 1
     elif d(textContains="Couldn't connect to").exists:
         print "Couldn't connect to "
-        d.screenshot("cant_connect_%d.png" %count)
-        wifi_connect(count,ap2,passwd,timeout)
         wifi_connect(count,ap,passwd,timeout)
+        wifi_connect(count,ap2,passwd,timeout)
         backHome()
         return 1
     else:
         print "Connect timeout over 60s"
-        d.screenshot("connect_overtime_%d.png" %count)
-        wifi_connect(count,ap2,passwd,timeout)
         wifi_connect(count,ap,passwd,timeout)
+        wifi_connect(count,ap2,passwd,timeout)
         backHome()
         return 1
 
 
 def main():
-    timeout = 45
-    homescreen_wait=60
+    timeout = 60
     total_count = 500
-    ap = 'xiaomi2g'
+    ap = 'xiaomi_hdd'
     passwd = 'asdfghjkl'
-    ap2 = 'xiaomi5g'
-    hostuser = 'xda'
+    ap2 = 'xiaomi_hdd_5G'
+    #hostuser = 'xda'
 
     '''
     reboot_device(0)
@@ -326,8 +319,6 @@ def main():
         temp=check_connection(i)
         wifi_scan_time(ap,ap2)
         forget_password(i)
-        os.system('adb bugreport >bugreport_count_%d_case1.log' %i)
-        os.system('adb shell dmesg >dmesg_count_%d_case1.log' %i)
         zip_log(i, "Case1")
         kill_log(hostuser)
         case1_fail_count=case1_fail_count+temp
@@ -346,15 +337,13 @@ def main():
         print "After reboot: ",datetime.datetime.now()
 
         get_log(i, 'Case2')
-        time.sleep(homescreen_wait)
+        time.sleep(70)
         temp=check_connection(i)
         wifi_scan_time(ap,ap2)
         # forget_password(i)
         if temp:
             print "Failed at clcyes %d" %i
         case2_fail_count=case2_fail_count+temp
-        os.system('adb bugreport >bugreport_count_%d_case2.log' %i)
-        os.system('adb shell dmesg >dmesg_count_%d_case2.log' %i)
         zip_log(i, "Case2")
         kill_log(hostuser)
 
@@ -372,26 +361,23 @@ def main():
         wifi_scan_time(ap,ap2)
         case3_fail_count=case3_fail_count+temp
         forget_password(i)
-        os.system('adb bugreport >bugreport_count_%d_case3.log' %i)
-        os.system('adb shell dmesg >dmesg_count_%d_case3.log' %i)
         zip_log(i, "Case3")
         kill_log(hostuser)
     print "case3 fail count %d" %case3_fail_count
-    '''
 
     print "Case 4"
 
     reboot_device(0)
-
+    '''
     wifi_connect(0, ap, passwd, 60)
-    time.sleep(3)
+    #time.sleep(3)
     wifi_connect(0, ap2, passwd, 60)
     backHome()
     case4_fail_count=0
-
-    for i in range(total_count):
+    get_log(0,"Case4")
+    for i in range(500):
         print "Loop %d" %i
-        get_log(i,"Case4")
+        #get_log(i,"Case4")
 
         temp1=wifi_switch_test(i,ap,ap2,passwd,timeout)
         time.sleep(4)
@@ -400,22 +386,18 @@ def main():
         ap=ap2
         ap2=t
         case4_fail_count=case4_fail_count+temp1
-        if temp1:
-            os.system('adb bugreport >bugreport_count_%d_case4.log' %i)
-            os.system('adb shell dmesg >dmesg_count_%d_case4.log' %i)
+        '''
         zip_log(i,"Case4")
         kill_log(hostuser)
+        '''
 
-
-    print "case4 fail count %d" %case4_fail_count
-
-
+    #print "case4 fail count %d" %case4_fail_count
 
     print "******************* Summary ****************"
-    print "case1 fail count %d" %case1_fail_count
-    print "case2 fail count %d" %case2_fail_count
-    print "case3 fail count %d" %case3_fail_count
-    print "case4 fail count %d" %case4_fail_count
+    #print "case1 fail count %d" %case1_fail_count
+    #print "case2 fail count %d" %case2_fail_count
+    #print "case3 fail count %d" %case3_fail_count
+    #print "case4 fail count %d" %case4_fail_count
 
 
 if __name__ == "__main__":

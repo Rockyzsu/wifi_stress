@@ -147,7 +147,7 @@ def check_connection(count):
     fp = open("capture.log", 'w')
     fp.write('\n')
     cmd = 'adb shell ping -c 4 www.baidu.com'
-    p = subprocess.Popen(cmd, stdout=fp, stderr=subprocess.PIPE, shell=True)
+    p = subprocess.Popen(cmd, stdout=fp, stderr=fp, shell=True)
     out, err = p.communicate()
 
     # print out
@@ -194,6 +194,19 @@ def check_connection(count):
 
     return result
 
+def wifi_setting_ui():
+    d.press.home()
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    d.press.down()
+    time.sleep(1)
+    d.press.right()
+    time.sleep(1)
+    d.press.right()
+    d.press.enter()
+    time.sleep(3)
+    d.press.enter()
 
 def reboot_device(count):
     print "reboot device in loop %d" % count
@@ -333,13 +346,13 @@ def main():
     ap = 'xiaomi_hdd'
     passwd = 'asdfghjk'
     ap2 = 'xiaomi_hdd_5G'
-    hostuser = 'xda'
+    hostuser = 'qabuilder'
 
     case1_fail_count = 0
     case2_fail_count = 0
     case3_fail_count = 0
     case4_fail_count = 0
-
+    '''
     #case1
     reboot_device(0)
     print "Case 1"
@@ -362,7 +375,7 @@ def main():
         case1_fail_count=case1_fail_count+temp1
 
     print "case1 fail count %d" %case1_fail_count
-
+    '''
     #case2
     reboot_device(0)
     print "Case 2"
@@ -376,6 +389,7 @@ def main():
 
         get_log(i, 'Case2')
         time.sleep(homescreen_wait)
+        wifi_setting_ui()
         temp2=check_connection(i)
         wifi_scan_time(ap,ap2)
         # forget_password(i)
@@ -395,7 +409,7 @@ def main():
     print "case2 fail count %d" %case2_fail_count
 
     #case3
-
+    '''
     print "Case 3"
     for i in range(total_count):
         print "Time: ",datetime.datetime.now()
@@ -447,7 +461,7 @@ def main():
 
 
     print "case4 fail count %d" %case4_fail_count
-
+    '''
 
 
     print "******************* Summary ****************"

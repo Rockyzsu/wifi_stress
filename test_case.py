@@ -84,7 +84,11 @@ print "Done"
 '''
 
 #print d(text="Couldn't connect to SQA_Wi_FI").exists
+'''
 try:
     d(text="See all").click()
 except:
     print "can't find see all"
+'''
+
+print d(textContains="(1)").exists

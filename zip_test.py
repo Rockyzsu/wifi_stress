@@ -1,5 +1,6 @@
 __author__ = 'xda'
 import subprocess,os,time,re
+
 def zip_log(count,caseNo):
     filename='logfile_%d_%s' %(count,caseNo)
     filename1="logcat_count_%d_%s.log" %(count,caseNo)
@@ -63,7 +64,7 @@ def print_out():
 
 #print_out()
 def testcase():
-    print count
+
 
 def main():
     count=9
